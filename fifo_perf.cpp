@@ -116,6 +116,14 @@ public:
       {
         int i = 1 + int(19.0 * rand() / RAND_MAX);  //  1 <= i <= 19
 
+        total -= i;
+
+        while(i){
+           out->write(*p++); 
+           i--;
+        }
+        wait(1000.0, SC_NS);
+
 	// Completer ici : envoyer i caracteres puis attendre 1000 ns
 	// (Fill here: send i characters and wait for 1000 ns)
 
@@ -138,46 +146,49 @@ public:
 
   void main()
   {
-    // Completer ici : consommer un caractere toutes les 100 ns
-    // (Fill here: get one character every 100 ns)
-
+      char buf;
+      while(1){
+          in->read(buf);
+          std::cout<<(buf);
+          wait(100.0, SC_NS);
+      }
   }
 };
 
 class top : public sc_module
 {
-public:
-  fifo fifo_inst;
-  producer prod_inst;
-  consumer cons_inst;
+    public:
+        fifo fifo_inst;
+        producer prod_inst;
+        consumer cons_inst;
 
-  top(sc_module_name name, int size) :
-    sc_module(name) ,
-    fifo_inst("Fifo1", size) , 
-    prod_inst("Producer1") , 
-    cons_inst("Consumer1")
-  {
-    prod_inst.out(fifo_inst);
-    cons_inst.in(fifo_inst);
-  }
+        top(sc_module_name name, int size) :
+            sc_module(name) ,
+            fifo_inst("Fifo1", size) , 
+            prod_inst("Producer1") , 
+            cons_inst("Consumer1")
+    {
+        prod_inst.out(fifo_inst);
+        cons_inst.in(fifo_inst);
+    }
 };
 
 int sc_main (int argc , char *argv[]) 
 {
-  int size = 10;
+    int size = 10;
 
-  if (argc > 1)
-    size = atoi(argv[1]);
+    if (argc > 1)
+        size = atoi(argv[1]);
 
-  if (size < 1)
-    size = 1;
+    if (size < 1)
+        size = 1;
 
-  if (size > 100000)
-    size = 100000;
+    if (size > 100000)
+        size = 100000;
 
-  srand(time(NULL));
-  top top1("Top1", size);
-  sc_start();
-  return 0;
+    srand(time(NULL));
+    top top1("Top1", size);
+    sc_start();
+    return 0;
 }
 

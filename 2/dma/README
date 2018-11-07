@@ -1,0 +1,50 @@
+pv example:
+
+
+This example illustrates the implementation of a simple PV system.
+More details on the platform can be found in pv_example.ppt
+
+ You have to set these environment variables 
+SYSTEMC_HOME -> your SystemC 2.2 installation
+TLM_HOME     -> your (draft) TLM 2.0 installation
+
+To build, run and verify the pv_system example, perform the following steps:
+1. cd pv_system
+2. make
+3. ./pv_system
+
+You can observe the following trace from execution:
+
+testbench module created
+memory1 module created - 0.25 KBytes - little endian - memory content initialized with test pattern
+memory2 module created - 0.25 KBytes - little endian
+dma module created - little endian
+router module created
+router: mapfile "router.map" loaded
+router: port "dma.target_port" identified - Address range: 0x4000 - 0x400f
+router: port "memory1.target_port" identified - Address range: 0 - 0xff
+router: port "memory2.target_port" identified - Address range: 0x100 - 0x1ff
+router: End of Elaboration: 0x3 target(s) connected
+DEBUG	dma: write 0x20 in pv_dma source address register
+DEBUG	dma: write 0x100 in pv_dma destination address register
+DEBUG	dma: write 0x40 in pv_dma length address register
+DEBUG	dma: write 0x1 in pv_dma control register
+DEBUG	dma: pv_dma started
+DEBUG	dma: pv_dma transfer started. Source address: 0x20 - destination address: 0x100 - length: 64
+DEBUG	memory1: Read block (0x10) at 0x20
+	0x20: 0x00000008: 0x00000009: 0x0000000a: 0x0000000b
+	0x30: 0x0000000c: 0x0000000d: 0x0000000e: 0x0000000f
+	0x40: 0x00000010: 0x00000011: 0x00000012: 0x00000013
+	0x50: 0x00000014: 0x00000015: 0x00000016: 0x00000017
+DEBUG	memory2: Write block (0x10) at 0
+	0x0: 0x00000008: 0x00000009: 0x0000000a: 0x0000000b
+	0x10: 0x0000000c: 0x0000000d: 0x0000000e: 0x0000000f
+	0x20: 0x00000010: 0x00000011: 0x00000012: 0x00000013
+	0x30: 0x00000014: 0x00000015: 0x00000016: 0x00000017
+DEBUG	dma: rise transfer end IRQ 
+DEBUG	dma: read pv_dma control register, returns 0x10
+DEBUG	dma: read pv_dma control register, returns 0x10
+DEBUG	dma: write 0 in pv_dma control register
+DEBUG	dma: clear transfer end IRQ 
+
+

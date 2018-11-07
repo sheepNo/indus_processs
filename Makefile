@@ -1,5 +1,5 @@
-SRCS = simple_fifo.cpp
-EXEC = simple_fifox
+SRCS = fifo_perf.cpp
+EXEC = fifo_perf
 OBJS = $(SRCS:.cpp=.o)
 DIR = /home/p/pierrlau/SystemC/systemc-2.3.0
 

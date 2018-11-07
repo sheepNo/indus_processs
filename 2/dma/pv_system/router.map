@@ -1,0 +1,10 @@
+;--------------------
+; pv_system mapping
+;--------------------
+
+memory1.target_port 0x0 0x100
+memory2.target_port 0x100 0x100
+dma.target_port 0x4000 0x10
+
+
+
