@@ -1,0 +1,75 @@
+\documentclass[11pt]{article}
+
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{eurosym}
+
+% Use the postscript times font!
+\usepackage{times}
+
+\usepackage{listings}
+\usepackage{geometry}
+
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+\newcommand\underrel[2]{\mathrel{\mathop{#2}\limits_{#1}}}
+
+\geometry{hmargin=2.0cm, vmargin=2.0cm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title, authors and addresses
+
+\title{\textbf{Industrial processes for high-confidence design}\\ TP SystemC}
+\date{\today}
+\author{Etienne Bontemps \and Andrey Sosnin}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\maketitle
+
+\section*{Exercice 0}
+\begin{enumerate}
+    \item \texttt{sc\_module} et \texttt{sc\_channel}: Elles représentent les composants physiques du système (opérationnels ou communiquants).
+    \item \texttt{SC\_METHOD} et \texttt{SC\_THREAD}. À la différence du process qui s'exécute en entier, le thread peut être arrêté. Les deux peuvent se suspendre.
+    \item \texttt{wait} et \texttt{notify} peuvent être utilisés pour contrôler les threads. Ces méthodes sont utilisées comme des mutex, des barrières (variables conditionnelles) ou des sémaphores.
+\end{enumerate}
+
+\section*{Exercice 1}
+\begin{enumerate}
+    \item Ajout de quelques lignes dans consumer...
+    \item 180ns pour \texttt{./fifo\_perf 1} 100ns pour \texttt{./fifo\_perf 10000} (décroissant).
+\end{enumerate}
+
+\section*{Exercice 2}
+\begin{enumerate}
+    \item La syntaxe de sensitive est moche. (la sensitivité doit suivre la déclaration du tread)
+    \item ok
+    \item   \begin{itemize}
+                \item Tout fonctionne sans réécrire la source.
+                \item \texttt{No target at this address 0x250}
+                \item \texttt{No target at this address 0xffffffff}
+                \item \texttt{Segmentation Fault}. le simulateur lui-même a segfault à l'exécution ; il n'a pas \emph{simulé} de segfault.
+            \end{itemize}
+    \item Utilisation de \texttt{sc\_time\_stamp} avec des dans les \texttt{read} et \texttt{write} \texttt{wait(double, SC\_NS)}
+    2240ns vs 2880ns (2 64bytes transfers)
+
+    il faut retirer la macro dans le Makefile
+\end{enumerate}
+
+
+\end{document}
