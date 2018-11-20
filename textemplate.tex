@@ -51,24 +51,141 @@
 
 \section*{Exercice 1}
 \begin{enumerate}
-    \item Ajout de quelques lignes dans consumer...
-    \item 180ns pour \texttt{./fifo\_perf 1} 100ns pour \texttt{./fifo\_perf 10000} (décroissant).
+    \item Ajout de quelques lignes dans consumer:
+    \begin{verbatim}
+class consumer : public sc_module
+{
+  // Completer ici avec un consommateur, muni d'un thread qui lit ce
+  // qui arrive dans la FIFO et l'ecrit a l'ecran.
+    public:
+        sc_port<read_if> in;
+        SC_HAS_PROCESS(consumer);
+        consumer(sc_module_name name) : sc_module(name)
+    {
+        SC_THREAD(main);
+    }
+        void main(){
+            char buf;
+            while(1){
+                in->read(buf);
+                std::cout<<(buf);
+            }
+        }
+};
+\end{verbatim}
+    \item
+    \begin{verbatim}
+class producer : public sc_module
+{
+public:
+    sc_port<write_if> out;
+    SC_HAS_PROCESS(producer);
+    producer(sc_module_name name) : sc_module(name)
+    {
+        SC_THREAD(main);
+    }
+
+    ...
+
+    void main(){
+    const char *p = genere_message(100000);
+    int total = 100000;
+    while (total > 0){
+        int i = 1 + int(19.0 * rand() / RAND_MAX);  //  1 <= i <= 19
+        total -= i;
+        while(i){
+           out->write(*p++);
+           i--;
+        }
+        wait(1000.0, SC_NS);
+      }
+    }
+};
+
+class consumer : public sc_module
+{
+public:
+    ...
+
+    void main()
+    {
+        char buf;
+        while(1){
+            in->read(buf);
+            std::cout<<(buf);
+            wait(100.0, SC_NS);
+        }
+    }
+};
+    \end{verbatim}
+
+    Résultat de la simulation:
+
+    180ns pour \texttt{./fifo\_perf 1}
+
+    150ns pour \texttt{./fifo\_perf 5}
+
+    120ns pour \texttt{./fifo\_perf 10}
+
+    \textbf{110ns pour \texttt{./fifo\_perf 18}}
+
+    \textbf{105ns pour \texttt{./fifo\_perf 32}}
+
+    100ns pour \texttt{./fifo\_perf 1000}
+
+    La taille de la fifo est non négligeable et peut vite devenir un goulot d'étranglement si elle n'est pas consommée et est trop petite. On remarque qu'il faut presque doubler la taille de la FIFO pour passer de 110ns à 105ns. C'est coûteux pour seulement 5\% de gain.
 \end{enumerate}
 
 \section*{Exercice 2}
 \begin{enumerate}
-    \item La syntaxe de sensitive est moche. (la sensitivité doit suivre la déclaration du tread)
-    \item ok
+    \item Ajouter : (l'ordre est important)
+    \begin{verbatim}
+pv_dma::pv_dma(sc_module_name module_name,
+	       tlm::tlm_endianness endian) :
+    ...
+
+    SC_THREAD(transfer);
+    sensitive<<m_start_transfer;
+    dont_initialize();
+
+    SC_METHOD(irq);
+    sensitive<<m_irq_to_change;
+    dont_initialize();
+
+    ...
+}
+    \end{verbatim}
+    \item
+    \begin{verbatim}
+int sc_main(int argc , char **argv) {
+
+    ...
+
+    // inclure ici les interconnexions des composants
+    // (include here the components interconnections)
+    testbench.initiator_port(router.target_port);
+    testbench.pv_dma_irq_in(pv_dma_irq);
+    dma.pv_dma_irq_out(pv_dma_irq);
+    router.initiator_port(memory1.target_port);
+    router.initiator_port(memory2.target_port);
+    dma.initiator_port(router.target_port);
+    router.initiator_port(dma.target_port);
+
+    ...
+
+}
+
+    \end{verbatim}
     \item   \begin{itemize}
                 \item Tout fonctionne sans réécrire la source.
                 \item \texttt{No target at this address 0x250}
                 \item \texttt{No target at this address 0xffffffff}
                 \item \texttt{Segmentation Fault}. le simulateur lui-même a segfault à l'exécution ; il n'a pas \emph{simulé} de segfault.
             \end{itemize}
-    \item Utilisation de \texttt{sc\_time\_stamp} avec des dans les \texttt{read} et \texttt{write} \texttt{wait(double, SC\_NS)}
-    2240ns vs 2880ns (2 64bytes transfers)
+    \item On ajoute simplement des \texttt{wait(double, SC\_NS)} dans les \texttt{read} et \texttt{write}. On compile ensuite avec ou sans le macro \texttt{PV\_DMA\_BLOCK\_TRANSFER}.
+    Au final, on a 2240ns contre 2880ns (2 64bytes transfers).
 
-    il faut retirer la macro dans le Makefile
+
 \end{enumerate}
 
 
