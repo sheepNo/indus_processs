@@ -1,7 +1,8 @@
 SRCS = ../models/pv_dma.cpp ../models/pv_memory.cpp dma_testbench.cpp main.cpp
 EXEC = simudma
 OBJS = $(SRCS:.cpp=.o)
-FLAGS = -DPV_MEMORY_DEBUG -DPV_DMA_DEBUG -DPV_ROUTER_DEBUG -DPV_DMA_BLOCK_TRANSFER 
+#FLAGS = -DPV_MEMORY_DEBUG -DPV_DMA_DEBUG -DPV_ROUTER_DEBUG -DPV_DMA_BLOCK_TRANSFER 
+FLAGS = -DPV_MEMORY_DEBUG -DPV_DMA_DEBUG -DPV_ROUTER_DEBUG 
 DIR = directory where SystemC is installed
 DIR = /home/p/pierrlau/SystemC/systemc-2.3.0
 DIRTLM = /home/p/pierrlau/SystemC/TLM-2.0-Draft1/tlm
